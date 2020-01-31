@@ -5,7 +5,7 @@ import time
 import cv2
 import math
 
-def getBoxes(imageName, showImage):
+def getBoxes(imageName, padding_crop, showImage):
 	# load
 	image = cv2.imread(imageName)
 	orig = image.copy()
@@ -68,11 +68,10 @@ def getBoxes(imageName, showImage):
 			boxes.append((startX, startY, endX, endY))
 			predictions.append(scoresData[x])
 
-	newBoxes = boxes
-
-	# newBoxes = non_max_suppression(np.array(boxes), probs=predictions)
+	newBoxes = non_max_suppression(np.array(boxes), probs=predictions)
 
 	if (showImage):
+		padding = padding_crop
 		# loop over the bounding boxes
 		for (startX, startY, endX, endY) in newBoxes:
 			# scale the bounding box coordinates based on the respective
@@ -83,7 +82,7 @@ def getBoxes(imageName, showImage):
 			endY = int(endY * (rows/float(newrows)))
 
 			# draw the bounding box on the frame
-			cv2.rectangle(orig, (startX, startY), (endX, endY), (0, 255, 0), 2)
+			cv2.rectangle(orig, (startX-padding, startY-padding), (endX+padding, endY+padding), (0, 255, 0), 2)
 
 		# show the output frame
 		cv2.imshow("Text Detection", orig)
@@ -91,7 +90,5 @@ def getBoxes(imageName, showImage):
 
 	return newBoxes
 
-newBoxes = getBoxes("car_wash.png", True)
-print(newBoxes)
-newBoxes = getBoxes("sal.jpeg", True)
+newBoxes = getBoxes("test_ocr.png", 10, True)
 print(newBoxes)
